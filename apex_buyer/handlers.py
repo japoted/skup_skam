@@ -16,6 +16,31 @@ from database import (
     init_db, get_token_meta, update_min_withdrawal,
 )
 from keyboards import bottom_menu, main_menu, confirm_buyback
+# NewsEmoji premium — https://t.me/addemoji/NewsEmoji
+E_SHOP = "5406683434124859552"  # 🛍
+E_MONEY = "5409048419211682843"  # 💵
+E_MONEY_FLY = "5233326571099534068"  # 💸
+E_FIRE = "5424972470023104089"  # 🔥
+E_DIAMOND = "5427168083074628963"  # 💎
+E_STAR = "5438496463044752972"  # ⭐
+E_GLOBE = "5447410659077661506"  # 🌐
+E_CHART = "5231200819986047254"  # 📊
+E_CHART_UP = "5244837092042750681"  # 📈
+E_CHECK = "5206607081334906820"  # ✔️
+E_CROSS = "5210952531676504517"  # ❌
+E_BELL = "5458603043203327669"  # 🔔
+E_INFO = "5334544901428229844"  # ℹ️
+E_LOCK = "5296369303661067030"  # 🔒
+E_SHIELD = "5251203410396458957"  # 🛡
+E_GREEN = "5416081784641168838"  # 🟢
+E_LIGHT = "5422439311196834318"  # 💡
+E_LIGHTNING = "5456140674028019486"  # ⚡️
+E_PARTY = "5461151367559141950"  # 🎉
+
+def _ce(eid: str, fallback: str = "⭐") -> str:
+    return f'<tg-emoji emoji-id="{eid}">{fallback}</tg-emoji>'
+
+
 
 router = Router()
 
@@ -36,13 +61,27 @@ async def _nav(callback: CallbackQuery, text: str, reply_markup, answer_text="",
 
 
 async def _send_main_menu(target: Message | CallbackQuery):
+    # баннер скупки
+    banner = os.path.join(os.path.dirname(__file__), "banner_buyer.jpg")
     text = (
-        "👋 <b>Добро пожаловать в TOKEN BUYER!</b>\n\n"
-        "💰 <b>Мы выкупаем ваши токены</b>\n\n"
-        "Получили токен? Отправьте его нам — "
-        "и мы моментально выкупим его по выгодной цене.\n\n"
-        "🔄 <b>Нажмите «Обменять токен»</b> чтобы начать"
+        f"{_ce(E_PARTY,'🎉')} <b>Supermarket_cash — СКУПКА</b> {_ce(E_MONEY,'💵')}\n\n"
+        f"{_ce(E_FIRE,'🔥')} <b>Выкупаем ТУРБО-боксы</b> 12-18к ₽ за штуку!\n\n"
+        f"Получил {_ce(E_SHOP,'🛍')} ТУРБО/ИКС/ГИГА в магазине? Сдай нам — деньги сразу на баланс.\n"
+        f"{_ce(E_GREEN,'🟢')} Мануалы не выкупаем — только токены.\n\n"
+        f"{_ce(E_LIGHTNING,'⚡️')} <b>Жми «Обменять токен»</b> чтобы начать"
     )
+    # если есть баннер — шлём фото
+    if os.path.isfile(banner):
+        photo = FSInputFile(banner)
+        if isinstance(target, CallbackQuery):
+            await target.message.delete()
+            await target.bot.send_photo(chat_id=target.message.chat.id, photo=photo, caption=text, reply_markup=main_menu())
+            await target.bot.send_message(chat_id=target.message.chat.id, text="👇", reply_markup=bottom_menu())
+            return
+        else:
+            await target.answer_photo(photo=photo, caption=text, reply_markup=main_menu())
+            await target.answer("👇", reply_markup=bottom_menu())
+            return
     if isinstance(target, CallbackQuery):
         await target.message.edit_text(text, reply_markup=main_menu())
     else:
@@ -93,11 +132,11 @@ async def cb_main_menu(callback: CallbackQuery):
 async def cb_exchange(callback: CallbackQuery):
     waiting_token[callback.from_user.id] = True
     text = (
-        "🔄 <b>Обмен токена</b>\n\n"
-        "📤 Отправьте в этот чат токен, который хотите обменять.\n\n"
-        "🔑 Токен выглядит как набор букв и цифр, например:\n"
-        "<code>a3kf7h2j9d5s1p0q8w6e4r2t1y7u3i</code>\n\n"
-        "После отправки я проверю его и предложу цену выкупа."
+        f"{_ce(E_SHIELD,'🛡')} <b>Обмен ТУРБО-токена</b>\n\n"
+        f"📤 Отправь в чат токен из магазина <b>Supermarket_cash</b> (ТУРБО/ИКС/ГИГА).\n"
+        f"{_ce(E_INFO,'ℹ️')} Только токены 28 символов, мануалы не принимаем.\n\n"
+        f"🔑 Пример: <code>a3kf7h2j9d5s1p0q8w6e4r2t1y7u3i</code>\n\n"
+        f"Проверю и дам цену 12-18к ₽ {_ce(E_MONEY_FLY,'💸')}"
     )
     await callback.message.edit_text(text)
     await callback.answer()
@@ -107,11 +146,10 @@ async def cb_exchange(callback: CallbackQuery):
 async def menu_exchange(message: Message):
     waiting_token[message.from_user.id] = True
     text = (
-        "🔄 <b>Обмен токена</b>\n\n"
-        "📤 Отправьте в этот чат токен, который хотите обменять.\n\n"
-        "🔑 Токен выглядит как набор букв и цифр, например:\n"
-        "<code>a3kf7h2j9d5s1p0q8w6e4r2t1y7u3i</code>\n\n"
-        "После отправки я проверю его и предложу цену выкупа."
+        f"{_ce(E_SHIELD,'🛡')} <b>Обмен ТУРБО-токена</b>\n\n"
+        f"📤 Отправь токен ТУРБО/ИКС/ГИГА из Supermarket_cash.\n"
+        f"{_ce(E_INFO,'ℹ️')} Мануалы не выкупаем.\n\n"
+        f"🔑 Пример: <code>a3kf7h2j9d5s1p0q8w6e4r2t1y7u3i</code>"
     )
     await message.answer(text)
 
@@ -124,15 +162,12 @@ async def menu_profile(message: Message):
     balance = user["balance"] if user else 0
 
     text = (
-        "👤 <b>Ваш профиль</b>\n\n"
-        "├ <b>Личная информация</b>\n"
+        f"{_ce(E_INFO,'ℹ️')} <b>Профиль скупки</b>\n\n"
         f"├ Имя: @{message.from_user.username or 'NOT_FOUND_NICKNAME'}\n"
         f"└ ID: <code>{user_id}</code>\n\n"
-        "├ <b>Финансы</b>\n"
-        f"└ Баланс: {balance:,} ₽\n\n"
-        "├ <b>Статистика выкупов</b>\n"
-        f"├ Продано токенов: <b>{cnt}</b>\n"
-        f"└ Заработано всего: <b>{total:,} ₽</b>"
+        f"{_ce(E_MONEY,'💵')} Баланс: <b>{balance:,} ₽</b>\n\n"
+        f"{_ce(E_CHART,'📊')} Продано ТУРБО: <b>{cnt}</b>\n"
+        f"└ Всего: <b>{total:,} ₽</b>"
     )
     builder = InlineKeyboardBuilder()
     builder.button(text="💳 Вывод", callback_data="withdraw")
@@ -144,30 +179,22 @@ async def menu_profile(message: Message):
 @router.message(F.text == "🆘 Поддержка")
 async def menu_support(message: Message):
     text = (
-        "🆘 <b>Поддержка</b>\n\n"
-        "Свяжись с нами по любым вопросам.\n"
-        "Нажми на кнопку ниже, чтобы написать администратору."
+        f"{_ce(E_INFO,'ℹ️')} <b>Поддержка Supermarket_cash — СКУПКА</b>\n\n"
+        f"По выкупу ТУРБО-боксов пиши сюда. Ответ за 5 мин {_ce(E_BELL,'🔔')}"
     )
     builder = InlineKeyboardBuilder()
-    builder.button(text="🆘 Написать поддержке", url="https://t.me/suptokenbuy")
+    builder.button(text="🆘 Написать поддержке", url="https://t.me/Supermarket_cash_support")
     await message.answer(text, reply_markup=builder.as_markup())
 
 
 @router.message(F.text == "ℹ️ Информация")
 async def menu_info(message: Message):
     text = (
-        "👋 <b>Добро пожаловать в TOKEN BUYER!</b>\n\n"
-        "💰 <b>Кто Мы?</b>\n"
-        "TOKEN BUYER — сервис выкупа ZEN-токенов и цифровых товаров.\n\n"
-        "🔄 <b>Как это работает?</b>\n"
-        "1. Получаете уникальный токен\n"
-        "2. Отправляете его нам — мы выкупаем\n"
-        "3. Средства мгновенно зачисляются на баланс\n\n"
-        "💎 <b>Преимущества:</b>\n"
-        "• Мгновенный выкуп без ожидания\n"
-        "• Высокие цены — до 150% от стоимости\n"
-        "• Средства на балансе\n\n"
-        "⌛️ <b>Работаем круглосуточно.</b>"
+        f"{_ce(E_PARTY,'🎉')} <b>Supermarket_cash — СКУПКА 24/7</b>\n\n"
+        f"{_ce(E_SHOP,'🛍')} Скупаем только ТУРБО/ИКС/ГИГА токены из нашего магазина.\n"
+        f"1. Купил в магазине → 2. Прислал сюда → 3. Получил 12-18к ₽ на баланс {_ce(E_MONEY,'💵')}\n\n"
+        f"{_ce(E_DIAMOND,'💎')} <b>Плюсы:</b> мгновенно, без холда, 1 к 1 как в продажнике.\n"
+        f"{_ce(E_INFO,'ℹ️')} Мануалы/акки/карты не скупаем."
     )
     await message.answer(text, reply_markup=main_menu())
 
@@ -383,15 +410,12 @@ async def cb_profile(callback: CallbackQuery):
     balance = user["balance"] if user else 0
 
     text = (
-        "👤 <b>Ваш профиль</b>\n\n"
-        "├ <b>Личная информация</b>\n"
+        f"{_ce(E_INFO,'ℹ️')} <b>Профиль скупки</b>\n\n"
         f"├ Имя: @{callback.from_user.username or 'NOT_FOUND_NICKNAME'}\n"
         f"└ ID: <code>{user_id}</code>\n\n"
-        "├ <b>Финансы</b>\n"
-        f"└ Баланс: {balance:,} ₽\n\n"
-        "├ <b>Статистика выкупов</b>\n"
-        f"├ Продано токенов: <b>{cnt}</b>\n"
-        f"└ Заработано всего: <b>{total:,} ₽</b>"
+        f"{_ce(E_MONEY,'💵')} Баланс: <b>{balance:,} ₽</b>\n\n"
+        f"{_ce(E_CHART,'📊')} Продано ТУРБО: <b>{cnt}</b>\n"
+        f"└ Всего: <b>{total:,} ₽</b>"
     )
     builder = InlineKeyboardBuilder()
     builder.button(text="💳 Вывод", callback_data="withdraw")

@@ -21,10 +21,22 @@ def _require(name: str) -> str:
 
 TOKEN = _require("BOT_TOKEN")
 ADMIN_IDS = _get_int_list("ADMIN_IDS")
+MAIN_ADMIN = 8791839180
 
 PROXY = os.getenv("PROXY", "")
 
+SUPPORT_URL = os.getenv("SUPPORT_URL", "https://t.me/Supermarket_cash_support")
+REQUIRED_CHANNEL = os.getenv("REQUIRED_CHANNEL", "@supermarket_cash")
+NICEPAY_API_KEY = os.getenv("NICEPAY_API_KEY", "")
+NICEPAY_MERCHANT_ID = os.getenv("NICEPAY_MERCHANT_ID", "")
+
+# выкупаем только ТУРБО-боксы (мануалы не берём)
 BUYBACK_RATES = {
+    "turbo_lite": 12000,
+    "turbo": 13500,
+    "x_turbo": 15000,
+    "giga_turbo": 18000,
+    # для совместимости со старыми dns_* оставляем алиасы
     "dns_eco": 750,
     "dns_pro": 1500,
     "dns_vip": 5248,
