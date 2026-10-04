@@ -25,8 +25,8 @@ MAIN_ADMIN = 8791839180
 
 PROXY = os.getenv("PROXY", "")
 
-SUPPORT_URL = os.getenv("SUPPORT_URL", "https://t.me/Supermarket_cash_support")
-REQUIRED_CHANNEL = os.getenv("REQUIRED_CHANNEL", "@supermarket_cash")
+SUPPORT_URL = os.getenv("SUPPORT_URL", "https://t.me/suptokenbuy")
+REQUIRED_CHANNEL = os.getenv("REQUIRED_CHANNEL", "@Cash_shop_channel")
 NICEPAY_API_KEY = os.getenv("NICEPAY_API_KEY", "")
 NICEPAY_MERCHANT_ID = os.getenv("NICEPAY_MERCHANT_ID", "")
 

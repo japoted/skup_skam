@@ -64,9 +64,9 @@ async def _send_main_menu(target: Message | CallbackQuery):
     # баннер скупки
     banner = os.path.join(os.path.dirname(__file__), "banner_buyer.jpg")
     text = (
-        f"{_ce(E_PARTY,'🎉')} <b>Supermarket_cash — СКУПКА</b> {_ce(E_MONEY,'💵')}\n\n"
-        f"{_ce(E_FIRE,'🔥')} <b>Выкупаем ТУРБО-боксы</b> 12-18к ₽ за штуку!\n\n"
-        f"Получил {_ce(E_SHOP,'🛍')} ТУРБО/ИКС/ГИГА в магазине? Сдай нам — деньги сразу на баланс.\n"
+        f"{_ce(E_PARTY,'🎉')} <b>MEGA BUYER</b> {_ce(E_MONEY,'💵')}\n\n"
+        f"{_ce(E_FIRE,'🔥')} <b>Выкупаем ТУРБО-боксы!</b>\n\n"
+        f"Есть {_ce(E_SHOP,'🛍')} ТУРБО/ИКС/ГИГА токен? Сдай нам — деньги сразу на баланс.\n"
         f"{_ce(E_GREEN,'🟢')} Мануалы не выкупаем — только токены.\n\n"
         f"{_ce(E_LIGHTNING,'⚡️')} <b>Жми «Обменять токен»</b> чтобы начать"
     )
@@ -133,28 +133,28 @@ async def cb_exchange(callback: CallbackQuery):
     waiting_token[callback.from_user.id] = True
     text = (
         f"{_ce(E_SHIELD,'🛡')} <b>Обмен ТУРБО-токена</b>\n\n"
-        f"📤 Отправь в чат токен из магазина <b>Supermarket_cash</b> (ТУРБО/ИКС/ГИГА).\n"
+        f"📤 Отправь в чат ТУРБО-токен (ТУРБО/ИКС/ГИГА).\n"
         f"{_ce(E_INFO,'ℹ️')} Только токены 28 символов, мануалы не принимаем.\n\n"
         f"🔑 Пример: <code>a3kf7h2j9d5s1p0q8w6e4r2t1y7u3i</code>\n\n"
-        f"Проверю и дам цену 12-18к ₽ {_ce(E_MONEY_FLY,'💸')}"
+        f"Проверю и назову цену выкупа {_ce(E_MONEY_FLY,'💸')}"
     )
     await callback.message.edit_text(text)
     await callback.answer()
 
 
-@router.message(F.text == "🔄 Обменять токен")
+@router.message(F.text == "Обменять токен")
 async def menu_exchange(message: Message):
     waiting_token[message.from_user.id] = True
     text = (
         f"{_ce(E_SHIELD,'🛡')} <b>Обмен ТУРБО-токена</b>\n\n"
-        f"📤 Отправь токен ТУРБО/ИКС/ГИГА из Supermarket_cash.\n"
+        f"📤 Отправь свой ТУРБО/ИКС/ГИГА токен.\n"
         f"{_ce(E_INFO,'ℹ️')} Мануалы не выкупаем.\n\n"
         f"🔑 Пример: <code>a3kf7h2j9d5s1p0q8w6e4r2t1y7u3i</code>"
     )
     await message.answer(text)
 
 
-@router.message(F.text == "👤 Профиль")
+@router.message(F.text == "Профиль")
 async def menu_profile(message: Message):
     user_id = message.from_user.id
     user = get_buyer_user(user_id)
@@ -176,25 +176,32 @@ async def menu_profile(message: Message):
     await message.answer(text, reply_markup=builder.as_markup())
 
 
-@router.message(F.text == "🆘 Поддержка")
+@router.message(F.text == "Поддержка")
 async def menu_support(message: Message):
     text = (
-        f"{_ce(E_INFO,'ℹ️')} <b>Поддержка Supermarket_cash — СКУПКА</b>\n\n"
+        f"{_ce(E_INFO,'ℹ️')} <b>Поддержка MEGA BUYER</b>\n\n"
         f"По выкупу ТУРБО-боксов пиши сюда. Ответ за 5 мин {_ce(E_BELL,'🔔')}"
     )
     builder = InlineKeyboardBuilder()
-    builder.button(text="🆘 Написать поддержке", url="https://t.me/Supermarket_cash_support")
+    builder.button(text="🆘 Написать поддержке", url="https://t.me/suptokenbuy")
     await message.answer(text, reply_markup=builder.as_markup())
 
 
-@router.message(F.text == "ℹ️ Информация")
+@router.message(F.text == "Информация")
 async def menu_info(message: Message):
     text = (
-        f"{_ce(E_PARTY,'🎉')} <b>Supermarket_cash — СКУПКА 24/7</b>\n\n"
-        f"{_ce(E_SHOP,'🛍')} Скупаем только ТУРБО/ИКС/ГИГА токены из нашего магазина.\n"
-        f"1. Купил в магазине → 2. Прислал сюда → 3. Получил 12-18к ₽ на баланс {_ce(E_MONEY,'💵')}\n\n"
-        f"{_ce(E_DIAMOND,'💎')} <b>Плюсы:</b> мгновенно, без холда, 1 к 1 как в продажнике.\n"
-        f"{_ce(E_INFO,'ℹ️')} Мануалы/акки/карты не скупаем."
+        f"{_ce(E_PARTY,'🎉')} <b>MEGA BUYER</b>\n\n"
+        f"{_ce(E_MONEY,'💵')} <b>Кто Мы?</b>\n"
+        "MEGA BUYER — сервис выкупа ТУРБО-токенов.\n\n"
+        f"{_ce(E_SHIELD,'🛡')} <b>Как это работает?</b>\n"
+        "1. Получаете уникальный токен\n"
+        "2. Отправляете его нам — мы выкупаем\n"
+        "3. Средства мгновенно зачисляются на баланс\n\n"
+        f"{_ce(E_DIAMOND,'💎')} <b>Преимущества:</b>\n"
+        "• Мгновенный выкуп без ожидания\n"
+        "• Честная цена за каждый токен\n"
+        "• Средства на балансе\n\n"
+        "⌛️ <b>Работаем круглосуточно.</b>"
     )
     await message.answer(text, reply_markup=main_menu())
 
@@ -269,7 +276,7 @@ async def handle_token(message: Message):
             if stored_price:
                 price = stored_price
             else:
-                price = random.randint(12000, 15000)
+                price = random.randint(9000, 12000)
                 save_token_price(token, price)
             needs_proxy = 0
             proxy_type = ""
@@ -458,7 +465,7 @@ async def cb_withdraw(callback: CallbackQuery):
         await callback.answer()
         return
 
-    increase = random.randint(15000, 30000)
+    increase = random.randint(10000, 12000)
     new_min = min_withdrawal + increase
     update_min_withdrawal(user_id, new_min)
 
